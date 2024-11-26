@@ -1,146 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mileage Tracker</title>
+    <title>SMS Remplissage de Quart</title>
     <style>
-        /* Main body background */
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #005151; /* Dark green UKG color */
+        }
+        .widget {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 350px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .widget-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+        .widget-filter {
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+        .widget-section {
             display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            margin: 18px 0;
+        }
+        .widget-section a {
+            color: #007BFF;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .widget-section a:hover {
+            text-decoration: underline;
+        }
+        .widget-reports {
+            font-size: 14px;
+            color: #007BFF;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-top: 12px;
+        }
+        .widget-reports:hover {
+            text-decoration: underline;
+        }
+        #shift-modal, #selection-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            color: black;
         }
-
-        /* Tile container */
-        #tile {
-            width: 90%;
-            max-width: 400px;
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
             padding: 20px;
-            background-color: rgba(220, 242, 240, 1);
-            border-radius: 12px;
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            color: #333;
-            box-sizing: border-box;
+            width: 350px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
-        /* Heading style */
-        #tile h1 {
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .modal-header .close {
+            cursor: pointer;
             font-size: 24px;
-            color: black; /* Black font color */
+            color: #333;
+        }
+        .modal-section {
+            margin-bottom: 15px;
+        }
+        .modal-section h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .modal-section input[type="text"],
+        .modal-section select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .apply-button, .next-button {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .apply-button:disabled, .next-button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        .employee-list {
+            margin: 15px 0;
+        }
+        .employee-item {
+            display: flex;
+            align-items: center;
             margin-bottom: 10px;
         }
-
-        /* "Powered by" style */
-        .powered-by {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #003153; /* Prussian Blue */
+        .employee-item label {
+            margin-left: 8px;
+        }
+        .selection-summary {
+            font-size: 14px;
             font-weight: bold;
-        }
-
-        /* Button styles */
-        .main-button {
-            display: block;
-            width: 90%;
-            padding: 12px;
-            margin: 15px auto;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            background-color: #30cebb; /* UKG teal color */
-            color: black; /* Black text color */
-        }
-
-        .main-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Section styles */
-        .section {
-            text-align: center;
-            padding-top: 10px;
-        }
-
-        /* Calendar input */
-        #date-picker {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: 1px solid #DB0A5B;
-            color: #333;
+            margin-top: 10px;
         }
     </style>
-</head>
-<body>
-    <div id="tile">
-        <!-- Heading -->
-        <h1>Mileage Tracker</h1>
-
-        <!-- Date Picker and Mileage Info -->
-        <div id="date-section" class="section">
-            <input type="date" id="date-picker" />
-            <p id="mileage-info">Total Mileage Traveled: <strong id="mileage">12.4</strong> miles</p>
-            <p>Total Sites Visited: <strong id="site-count">3</strong></p>
-            <button id="view-site-log" class="main-button" onclick="openSiteLog()">Daily Mileage Log</button>
-        </div>
-
-        <!-- "Powered by" footer -->
-        <p class="powered-by">Powered by: CloudApper AI</p>
-    </div>
-
     <script>
-        const mileageInfo = document.getElementById("mileage-info");
-        const siteCount = document.getElementById("site-count");
-        const datePicker = document.getElementById("date-picker");
+        function showModal() {
+            document.getElementById('shift-modal').style.display = 'flex';
+        }
 
-        // Set today's date as default
-        const today = new Date();
-        datePicker.value = today.toISOString().split('T')[0];
+        function hideModal() {
+            document.getElementById('shift-modal').style.display = 'none';
+        }
 
-        // Default mileage and site data for today
-        const defaultMileage = 12.4;
-        const defaultSites = 3;
+        function toggleCalendarPopup() {
+            const calendarPopup = document.getElementById('calendar-popup');
+            calendarPopup.style.display =
+                calendarPopup.style.display === 'block' ? 'none' : 'block';
+        }
 
-        // Different date mileage and site data
-        const otherDayMileage = 16.7;
-        const otherDaySites = 5;
+        function selectDate(event) {
+            const selectedDate = event.target.value;
+            const inputField = document.querySelector('.modal-section input[type="text"]');
+            inputField.value = selectedDate;
+            toggleCalendarPopup();
+        }
 
-        // Update mileage and site count based on selected date
-        datePicker.addEventListener("change", () => {
-            const selectedDate = new Date(datePicker.value);
-            if (selectedDate.toDateString() === today.toDateString()) {
-                mileageInfo.innerHTML = `Total Mileage Traveled: <strong id="mileage">${defaultMileage}</strong> miles`;
-                siteCount.textContent = defaultSites;
-            } else {
-                mileageInfo.innerHTML = `Total Mileage Traveled: <strong id="mileage">${otherDayMileage}</strong> miles`;
-                siteCount.textContent = otherDaySites;
-            }
-        });
+        function showSelectionModal() {
+            hideModal(); // Hide the first modal when clicking apply
+            const selectedShift = document.querySelector('.modal-section select:nth-of-type(2)').value;
+            const selectedProcedure = document.querySelector('.modal-section select:nth-of-type(3)').value;
+            const shiftSummary = document.getElementById('shift-summary');
+            const procedureSummary = document.getElementById('procedure-summary');
 
-        // Open site log with condition based on selected date
-        function openSiteLog() {
-            const selectedDate = new Date(datePicker.value);
-            const isToday = selectedDate.toDateString() === today.toDateString();
+            shiftSummary.textContent = `${selectedShift.split(' ')[1].substr(0, 3)} ${selectedShift.split(' ')[0]}`;
+            procedureSummary.textContent = selectedProcedure;
 
-            if (isToday) {
-                // URL for today's log
-                window.open("https://i0.wp.com/alizswonderland.com/wp-content/uploads/2021/01/How-plan-travel-itinerary-Google-My-Maps-AlizsWonderland-f.jpg?fit=1000%2C1000&ssl=1", "_blank");
-            } else {
-                // URL for different date log
-                window.open("https://www.outdoorblueprint.com/outdoors-101/plan-a-road-trip-route-with-google-maps/step6b.png", "_blank");
-            }
+            // Now show the selection modal
+            document.getElementById('selection-modal').style.display = 'flex';
+        }
+
+        function hideSelectionModal() {
+            document.getElementById('selection-modal').style.display = 'none';
+        }
+
+        function updateSelectionCount() {
+            const checkboxes = document.querySelectorAll('.employee-item input[type="checkbox"]');
+            const selectedCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+            const selectionSummary = document.getElementById('selection-summary');
+            selectionSummary.textContent = `${selectedCount} sur 6 sélectionnés`;
         }
     </script>
+</head>
+<body>
+    <div class="widget">
+        <div class="widget-title">SMS Remplissage de Quart</div>
+        <div class="widget-filter">
+            Filtrer les quarts ouverts<br>
+            Défaut sélectionné : Aujourd'hui + 2 jour(s)
+        </div>
+        <div class="widget-section">
+            <a onclick="showModal()">Quarts ouverts disponibles</a>
+            <span>1</span>
+        </div>
+        <div class="widget-section">
+            <a onclick="showModal()">Toutes les offres en cours</a>
+            <span>1</span>
+        </div>
+        <div class="widget-section">
+            <a onclick="showModal()">Toutes les offres sans réponse</a>
+            <span>1</span>
+        </div>
+        <div class="widget-section">
+            <a onclick="showModal()">Toutes les offres avec réponses</a>
+            <span>0</span>
+        </div>
+        <a href="#" class="widget-reports">Rapports &rsaquo;</a>
+    </div>
+
+    <div id="shift-modal" onclick="hideModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span>Offre de Quart Ouvert</span>
+                <span class="close" onclick="hideModal()">×</span>
+            </div>
+            <div class="modal-section">
+                <h3>Date</h3>
+                <div style="position: relative;">
+                    <input
+                        type="text"
+                        value="Sélectionné par défaut : Aujourd'hui + 2 jour(s)"
+                        onclick="toggleCalendarPopup()"
+                        readonly
+                    >
+                    <div id="calendar-popup">
+                        <input type="date" style="width: 100%;" onchange="selectDate(event)">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-section">
+                <h3>Lieu</h3>
+                <select>
+                    <option>Sélectionner les lieux</option>
+                </select>
+            </div>
+            <div class="modal-section">
+                <h3>Quart ouvert</h3>
+                <select>
+                    <option value="12/13 Friday">13/12 Vendredi</option>
+                    <option value="12/14 Saturday">14/12 Samedi</option>
+                    <option value="12/16 Monday">16/12 Lundi</option>
+                    <option value="12/18 Wednesday">18/12 Mercredi</option>
+                </select>
+            </div>
+            <div class="modal-section">
+                <h3>Ensemble de procédures</h3>
+                <select>
+                    <option value="SM Call List">Liste d'appels SM</option>
+                    <option value="SM Crane Call List">Liste d'appels Grue SM</option>
+                    <option value="SM-Employee By Hire Date, Scheduled Hours">SM-Employé par date d'embauche, heures planifiées</option>
+                    <option value="Find Replacements">Trouver des remplaçants</option>
+                </select>
+            </div>
+            <div class="modal-section">
+                <h3>Compétence</h3>
+                <select>
+                    <option>Aucun élément</option>
+                </select>
+            </div>
+            <div class="modal-section">
+                <h3>Certification</h3>
+                <select>
+                    <option>Aucun élément</option>
+                </select>
+            </div>
+            <button class="apply-button" onclick="showSelectionModal()">Appliquer</button>
+        </div>
+    </div>
+
+    <!-- Employee Selection Modal -->
+    <div id="selection-modal" onclick="showSelectionModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span>Sélectionnez des employés</span>
+                <span class="close" onclick="hideSelectionModal()">×</span>
+            </div>
+            <div class="employee-list">
+                <div class="employee-item">
+                    <input type="checkbox" onchange="updateSelectionCount()">
+                    <label>Employé 1</label>
+                </div>
+                <div class="employee-item">
+                    <input type="checkbox" onchange="updateSelectionCount()">
+                    <label>Employé 2</label>
+                </div>
+                <div class="employee-item">
+                    <input type="checkbox" onchange="updateSelectionCount()">
+                    <label>Employé 3</label>
+                </div>
+                <div class="employee-item">
+                    <input type="checkbox" onchange="updateSelectionCount()">
+                    <label>Employé 4</label>
+                </div>
+                <div class="employee-item">
+                    <input type="checkbox" onchange="updateSelectionCount()">
+                    <label>Employé 5</label>
+                </div>
+                <div class="employee-item">
+                    <input type="checkbox" onchange="updateSelectionCount()">
+                    <label>Employé 6</label>
+                </div>
+            </div>
+            <div class="selection-summary" id="selection-summary">0 sur 6 sélectionnés</div>
+            <button class="next-button" onclick="hideSelectionModal()">Suivant</button>
+        </div>
+    </div>
 </body>
 </html>
