@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Selection</title>
+    <title>Sélection des Employés</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,7 +26,7 @@
             background-color: white;
             border-radius: 8px;
             padding: 20px;
-            width: 400px;
+            width: 270px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .modal-header {
@@ -37,11 +37,7 @@
             font-weight: bold;
             margin-bottom: 20px;
         }
-        .modal-header .close {
-            cursor: pointer;
-            font-size: 24px;
-            color: #333;
-        }
+      
         .modal-header span {
             flex: 1;
         }
@@ -98,57 +94,47 @@
 <div class="modal-container">
     <div class="modal">
         <div class="modal-header">
-            <span>Open Shift Offer</span>
-            <span class="close" onclick="closeModal()">×</span>
+            <span>Offre de Quart Disponible</span>
         </div>
 
         <div class="shift-details">
             <p><strong>ven. 12/13</strong> | V-P3-13-22 (13:00 – 22:00)</p>
-            <p>Location 1A / Assembler</p>
-            <p><strong>Procedure Set</strong> SM Call List</p>
+            <p>Lieu 1A / Assembleur</p>
+            <p><strong>Procédure définie</strong> Liste d'appel SM</p>
         </div>
 
         <div class="employee-list">
-        
-        
-        <div class="employee-list">
-                <div class="employee-item">
-                    <input type="checkbox" onclick="updateSelectionCount()">
-                    <label>Bolduc, Justin Q</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onclick="updateSelectionCount()">
-                    <label>R1-Breton, Anne Q</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onclick="updateSelectionCount()">
-                    <label>R2-Fortin, Maxime Q</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onclick="updateSelectionCount()">
-                    <label>R3-Deschamps, Martin Q</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onclick="updateSelectionCount()">
-                    <label>R4-Laflamme, Kayla Q</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onclick="updateSelectionCount()">
-                    <label>R5-Potvin, Vincent Q</label>
-                </div>
-                
-                
-                
-            
-               
+            <div class="employee-item">
+                <input type="checkbox" onclick="updateSelectionCount()">
+                <label>Bolduc, Justin Q</label>
+            </div>
+            <div class="employee-item">
+                <input type="checkbox" onclick="updateSelectionCount()">
+                <label>R1-Breton, Anne Q</label>
+            </div>
+            <div class="employee-item">
+                <input type="checkbox" onclick="updateSelectionCount()">
+                <label>R2-Fortin, Maxime Q</label>
+            </div>
+            <div class="employee-item">
+                <input type="checkbox" onclick="updateSelectionCount()">
+                <label>R3-Deschamps, Martin Q</label>
+            </div>
+            <div class="employee-item">
+                <input type="checkbox" onclick="updateSelectionCount()">
+                <label>R4-Laflamme, Kayla Q</label>
+            </div>
+            <div class="employee-item">
+                <input type="checkbox" onclick="updateSelectionCount()">
+                <label>R5-Potvin, Vincent Q</label>
             </div>
         </div>
 
-        <div class="selection-summary" id="selection-summary">0 of 6 selected</div>
+        <div class="selection-summary" id="selection-summary">0 sur 6 sélectionnés</div>
 
         <div class="action-buttons">
-            <button class="button" onclick="goBack()">Back</button>
-            <button class="button" onclick="nextStep()">Next</button>
+            <button class="button" onclick="goBack()">Retour</button>
+            <button class="button" onclick="nextStep()">Suivant</button>
         </div>
     </div>
 </div>
@@ -157,18 +143,20 @@
     function closeModal() {
         document.querySelector('.modal-container').style.display = 'none';
     }
- function updateSelectionCount() {
-            const checkboxes = document.querySelectorAll('.employee-item input[type="checkbox"]');
-            const selectedCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
-            const selectionSummary = document.getElementById('selection-summary');
-            selectionSummary.textContent = `${selectedCount} of 6 selected`;
-        }
+
+    function updateSelectionCount() {
+        const checkboxes = document.querySelectorAll('.employee-item input[type="checkbox"]');
+        const selectedCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+        const selectionSummary = document.getElementById('selection-summary');
+        selectionSummary.textContent = `${selectedCount} sur 6 sélectionnés`;
+    }
+
     function goBack() {
-        alert('Going back...');
+        alert('Retour...');
     }
 
     function nextStep() {
-        alert('Proceeding to the next step...');
+        alert('Passage à l’étape suivante...');
     }
 </script>
 
