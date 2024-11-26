@@ -1,103 +1,146 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offre de Quart</title>
+    <title>Mileage Tracker</title>
     <style>
+        /* Main body background */
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #005151; /* Dark green UKG color */
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5f5f5;
-        }
-        .modal {
-            background: white;
-            width: 380px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            padding: 16px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 16px;
-        }
-        .header span {
             color: black;
         }
-        .details {
-            border-left: 4px solid red;
-            padding-left: 8px;
-            margin-bottom: 16px;
-        }
-        .details .line {
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-        .details .line strong {
+
+        /* Tile container */
+        #tile {
+            width: 90%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: rgba(220, 242, 240, 1);
+            border-radius: 12px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
             color: #333;
+            box-sizing: border-box;
+        }
+
+        /* Heading style */
+        #tile h1 {
+            font-size: 24px;
+            color: black; /* Black font color */
+            margin-bottom: 10px;
+        }
+
+        /* "Powered by" style */
+        .powered-by {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #003153; /* Prussian Blue */
             font-weight: bold;
         }
-        .offer-timer {
-            font-size: 14px;
-            color: #333;
-        }
-        .actions {
-            text-align: center;
-            margin-top: 16px;
-        }
-        .button {
-            display: inline-block;
-            width: 120px;
-            padding: 10px;
-            font-size: 14px;
+
+        /* Button styles */
+        .main-button {
+            display: block;
+            width: 90%;
+            padding: 12px;
+            margin: 15px auto;
+            font-size: 16px;
             font-weight: bold;
-            text-align: center;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            margin: 8px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-color: #30cebb; /* UKG teal color */
+            color: black; /* Black text color */
         }
-        .accept {
-            background: #007BFF;
-            color: white;
+
+        .main-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
         }
-        .accept:hover {
-            background: #0056b3;
+
+        /* Section styles */
+        .section {
+            text-align: center;
+            padding-top: 10px;
         }
-        .decline {
-            background: #FF4C4C;
-            color: white;
-        }
-        .decline:hover {
-            background: #b33a3a;
+
+        /* Calendar input */
+        #date-picker {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #DB0A5B;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div class="modal">
-        <div class="header">
-            <span>Offre de Quart</span>
-            <span class="menu-button">•••</span>
+    <div id="tile">
+        <!-- Heading -->
+        <h1>Mileage Tracker</h1>
+
+        <!-- Date Picker and Mileage Info -->
+        <div id="date-section" class="section">
+            <input type="date" id="date-picker" />
+            <p id="mileage-info">Total Mileage Traveled: <strong id="mileage">12.4</strong> miles</p>
+            <p>Total Sites Visited: <strong id="site-count">3</strong></p>
+            <button id="view-site-log" class="main-button" onclick="openSiteLog()">Daily Mileage Log</button>
         </div>
-        <div class="details">
-            <div class="line">ven. 12/13</div>
-            <div class="line"><strong>V-P3-13-22 (13:00 – 22:00)</strong></div>
-            <div class="line">.../ Production / Location 1A / Assembleur</div>
-            <div class="offer-timer">Temps restant de l'offre <strong>[00:37]</strong></div>
-        </div>
-        <div class="actions">
-            <button class="button accept">✔ Accepter</button>
-            <button class="button decline">✖ Refuser</button>
-        </div>
+
+        <!-- "Powered by" footer -->
+        <p class="powered-by">Powered by: CloudApper AI</p>
     </div>
+
+    <script>
+        const mileageInfo = document.getElementById("mileage-info");
+        const siteCount = document.getElementById("site-count");
+        const datePicker = document.getElementById("date-picker");
+
+        // Set today's date as default
+        const today = new Date();
+        datePicker.value = today.toISOString().split('T')[0];
+
+        // Default mileage and site data for today
+        const defaultMileage = 12.4;
+        const defaultSites = 3;
+
+        // Different date mileage and site data
+        const otherDayMileage = 16.7;
+        const otherDaySites = 5;
+
+        // Update mileage and site count based on selected date
+        datePicker.addEventListener("change", () => {
+            const selectedDate = new Date(datePicker.value);
+            if (selectedDate.toDateString() === today.toDateString()) {
+                mileageInfo.innerHTML = `Total Mileage Traveled: <strong id="mileage">${defaultMileage}</strong> miles`;
+                siteCount.textContent = defaultSites;
+            } else {
+                mileageInfo.innerHTML = `Total Mileage Traveled: <strong id="mileage">${otherDayMileage}</strong> miles`;
+                siteCount.textContent = otherDaySites;
+            }
+        });
+
+        // Open site log with condition based on selected date
+        function openSiteLog() {
+            const selectedDate = new Date(datePicker.value);
+            const isToday = selectedDate.toDateString() === today.toDateString();
+
+            if (isToday) {
+                // URL for today's log
+                window.open("https://i0.wp.com/alizswonderland.com/wp-content/uploads/2021/01/How-plan-travel-itinerary-Google-My-Maps-AlizsWonderland-f.jpg?fit=1000%2C1000&ssl=1", "_blank");
+            } else {
+                // URL for different date log
+                window.open("https://www.outdoorblueprint.com/outdoors-101/plan-a-road-trip-route-with-google-maps/step6b.png", "_blank");
+            }
+        }
+    </script>
 </body>
 </html>
