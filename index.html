@@ -3,300 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMS Remplissage de Quart</title>
+    <title>Offre de Quart</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-        }
-        .widget {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            width: 270px;
-            padding: 16px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .widget-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 18px;
-        }
-        .widget-filter {
-            font-size: 14px;
-            margin-bottom: 18px;
-        }
-        .widget-section {
+            margin: 0;
+            padding: 0;
             display: flex;
-            justify-content: space-between;
-            font-size: 16px;
-            margin: 18px 0;
-        }
-        .widget-section a {
-            color: #007BFF;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .widget-section a:hover {
-            text-decoration: underline;
-        }
-        .widget-reports {
-            font-size: 14px;
-            color: #007BFF;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            margin-top: 12px;
-        }
-        .widget-reports:hover {
-            text-decoration: underline;
-        }
-        #shift-modal, #selection-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
         }
-        .modal-content {
-            background-color: white;
+        .modal {
+            background: white;
+            width: 380px;
             border-radius: 8px;
-            padding: 20px;
-            width: 350px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            padding: 16px;
         }
-        .modal-header {
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
-        .modal-header .close {
-            cursor: pointer;
-            font-size: 24px;
+        .header span {
+            color: black;
+        }
+        .details {
+            border-left: 4px solid red;
+            padding-left: 8px;
+            margin-bottom: 16px;
+        }
+        .details .line {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .details .line strong {
+            color: #333;
+            font-weight: bold;
+        }
+        .offer-timer {
+            font-size: 14px;
             color: #333;
         }
-        .modal-section {
-            margin-bottom: 15px;
+        .actions {
+            text-align: center;
+            margin-top: 16px;
         }
-        .modal-section h3 {
-            font-size: 14px;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        .modal-section input[type="text"],
-        .modal-section select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .apply-button, .next-button {
-            width: 100%;
+        .button {
+            display: inline-block;
+            width: 120px;
             padding: 10px;
             font-size: 14px;
             font-weight: bold;
-            color: white;
-            background-color: #007BFF;
+            text-align: center;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin: 8px;
         }
-        .apply-button:disabled, .next-button:disabled {
-            background-color: #aaa;
-            cursor: not-allowed;
+        .accept {
+            background: #007BFF;
+            color: white;
         }
-        .employee-list {
-            margin: 15px 0;
+        .accept:hover {
+            background: #0056b3;
         }
-        .employee-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+        .decline {
+            background: #FF4C4C;
+            color: white;
         }
-        .employee-item label {
-            margin-left: 8px;
-        }
-        .selection-summary {
-            font-size: 14px;
-            font-weight: bold;
-            margin-top: 10px;
+        .decline:hover {
+            background: #b33a3a;
         }
     </style>
-    <script>
-        function showModal() {
-            document.getElementById('shift-modal').style.display = 'flex';
-        }
-
-        function hideModal() {
-            document.getElementById('shift-modal').style.display = 'none';
-        }
-
-        function toggleCalendarPopup() {
-            const calendarPopup = document.getElementById('calendar-popup');
-            calendarPopup.style.display =
-                calendarPopup.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function selectDate(event) {
-            const selectedDate = event.target.value;
-            const inputField = document.querySelector('.modal-section input[type="text"]');
-            inputField.value = selectedDate;
-            toggleCalendarPopup();
-        }
-
-        function showSelectionModal() {
-            hideModal(); // Hide the first modal when clicking apply
-            const selectedShift = document.querySelector('.modal-section select:nth-of-type(2)').value;
-            const selectedProcedure = document.querySelector('.modal-section select:nth-of-type(3)').value;
-            const shiftSummary = document.getElementById('shift-summary');
-            const procedureSummary = document.getElementById('procedure-summary');
-
-            shiftSummary.textContent = `${selectedShift.split(' ')[1].substr(0, 3)} ${selectedShift.split(' ')[0]}`;
-            procedureSummary.textContent = selectedProcedure;
-
-            // Now show the selection modal
-            document.getElementById('selection-modal').style.display = 'flex';
-        }
-
-        function hideSelectionModal() {
-            document.getElementById('selection-modal').style.display = 'none';
-        }
-
-        function updateSelectionCount() {
-            const checkboxes = document.querySelectorAll('.employee-item input[type="checkbox"]');
-            const selectedCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
-            const selectionSummary = document.getElementById('selection-summary');
-            selectionSummary.textContent = `${selectedCount} sur 6 sélectionnés`;
-        }
-    </script>
 </head>
 <body>
-    <div class="widget">
-        <div class="widget-title">SMS Remplissage de Quart</div>
-        <div class="widget-filter">
-            Filtrer les quarts ouverts<br>
-            Défaut sélectionné : Aujourd'hui + 2 jour(s)
+    <div class="modal">
+        <div class="header">
+            <span>Offre de Quart</span>
+            <span class="menu-button">•••</span>
         </div>
-        <div class="widget-section">
-            <a onclick="showModal()">Quarts ouverts disponibles</a>
-            <span>1</span>
+        <div class="details">
+            <div class="line">ven. 12/13</div>
+            <div class="line"><strong>V-P3-13-22 (13:00 – 22:00)</strong></div>
+            <div class="line">.../ Production / Location 1A / Assembleur</div>
+            <div class="offer-timer">Temps restant de l'offre <strong>[00:37]</strong></div>
         </div>
-        <div class="widget-section">
-            <a onclick="showModal()">Toutes les offres en cours</a>
-            <span>1</span>
-        </div>
-        <div class="widget-section">
-            <a onclick="showModal()">Toutes les offres sans réponse</a>
-            <span>1</span>
-        </div>
-        <div class="widget-section">
-            <a onclick="showModal()">Toutes les offres avec réponses</a>
-            <span>0</span>
-        </div>
-        <a href="#" class="widget-reports">Rapports &rsaquo;</a>
-    </div>
-
-    <div id="shift-modal" onclick="hideModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <span>Offre de Quart Ouvert</span>
-                <span class="close" onclick="hideModal()">×</span>
-            </div>
-            <div class="modal-section">
-                <h3>Date</h3>
-                <div style="position: relative;">
-                    <input
-                        type="text"
-                        value="Sélectionné par défaut : Aujourd'hui + 2 jour(s)"
-                        onclick="toggleCalendarPopup()"
-                        readonly
-                    >
-                    <div id="calendar-popup">
-                        <input type="date" style="width: 100%;" onchange="selectDate(event)">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-section">
-                <h3>Lieu</h3>
-                <select>
-                    <option>Sélectionner les lieux</option>
-                </select>
-            </div>
-            <div class="modal-section">
-                <h3>Quart ouvert</h3>
-                <select>
-                    <option value="12/13 Friday">13/12 Vendredi</option>
-                    <option value="12/14 Saturday">14/12 Samedi</option>
-                    <option value="12/16 Monday">16/12 Lundi</option>
-                    <option value="12/18 Wednesday">18/12 Mercredi</option>
-                </select>
-            </div>
-            <div class="modal-section">
-                <h3>Ensemble de procédures</h3>
-                <select>
-                    <option value="SM Call List">Liste d'appels SM</option>
-                    <option value="SM Crane Call List">Liste d'appels Grue SM</option>
-                    <option value="SM-Employee By Hire Date, Scheduled Hours">SM-Employé par date d'embauche, heures planifiées</option>
-                    <option value="Find Replacements">Trouver des remplaçants</option>
-                </select>
-            </div>
-            <div class="modal-section">
-                <h3>Compétence</h3>
-                <select>
-                    <option>Aucun élément</option>
-                </select>
-            </div>
-            <div class="modal-section">
-                <h3>Certification</h3>
-                <select>
-                    <option>Aucun élément</option>
-                </select>
-            </div>
-            <button class="apply-button" onclick="showSelectionModal()">Appliquer</button>
-        </div>
-    </div>
-
-    <!-- Employee Selection Modal -->
-    <div id="selection-modal" onclick="showSelectionModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <span>Sélectionnez des employés</span>
-                <span class="close" onclick="hideSelectionModal()">×</span>
-            </div>
-            <div class="employee-list">
-                <div class="employee-item">
-                    <input type="checkbox" onchange="updateSelectionCount()">
-                    <label>Employé 1</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onchange="updateSelectionCount()">
-                    <label>Employé 2</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onchange="updateSelectionCount()">
-                    <label>Employé 3</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onchange="updateSelectionCount()">
-                    <label>Employé 4</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onchange="updateSelectionCount()">
-                    <label>Employé 5</label>
-                </div>
-                <div class="employee-item">
-                    <input type="checkbox" onchange="updateSelectionCount()">
-                    <label>Employé 6</label>
-                </div>
-            </div>
-            <div class="selection-summary" id="selection-summary">0 sur 6 sélectionnés</div>
-            <button class="next-button" onclick="hideSelectionModal()">Suivant</button>
+        <div class="actions">
+            <button class="button accept">✔ Accepter</button>
+            <button class="button decline">✖ Refuser</button>
         </div>
     </div>
 </body>
